@@ -15,15 +15,15 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 public class RouterRest {
     @Bean
     public RouterFunction<ServerResponse> routerFunction(Handler handler) {
-        return route(POST("/api/v1/franchise"), handler::createFranchise)
-            .andRoute(PUT("/api/v1/franchise/{id}/rename"), handler::renameFranchise)
-            .andRoute(GET("/api/v1/franchise/{franchiseId}/top-products-by-branch"), handler::getTopProductsByBranch)
-            .andRoute(POST("/api/v1/branch"), handler::createBranch)
-            .andRoute(PUT("/api/v1/branch/{id}/rename"), handler::renameBranch)
-            .andRoute(POST("/api/v1/product"), handler::createProduct)
-            .andRoute(PUT("/api/v1/product/{id}/rename"), handler::renameProduct)
-            .andRoute(POST("/api/v1/branch-product"), handler::createBranchProduct)
-            .andRoute(PUT("/api/v1/branch/{branchId}/product/{productId}/stock"), handler::updateStock)
-            .andRoute(DELETE("/api/v1/branch/{branchId}/product/{productId}"), handler::deleteBranchProduct);
+        return route(POST(ApiPaths.FRANCHISE), handler::createFranchise)
+            .andRoute(PUT(ApiPaths.FRANCHISE_RENAME), handler::renameFranchise)
+            .andRoute(GET(ApiPaths.FRANCHISE_TOP_PRODUCTS), handler::getTopProductsByBranch)
+            .andRoute(POST(ApiPaths.BRANCH), handler::createBranch)
+            .andRoute(PUT(ApiPaths.BRANCH_RENAME), handler::renameBranch)
+            .andRoute(POST(ApiPaths.PRODUCT), handler::createProduct)
+            .andRoute(PUT(ApiPaths.PRODUCT_RENAME), handler::renameProduct)
+            .andRoute(POST(ApiPaths.BRANCH_PRODUCT), handler::createBranchProduct)
+            .andRoute(PUT(ApiPaths.UPDATE_STOCK), handler::updateStock)
+            .andRoute(DELETE(ApiPaths.DELETE_BRANCH_PRODUCT), handler::deleteBranchProduct);
     }
 }

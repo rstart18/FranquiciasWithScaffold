@@ -22,9 +22,5 @@ project(':model').projectDir = file('./domain/model')
 project(':usecase').projectDir = file('./domain/usecase')
 include ':mongo-repository'
 project(':mongo-repository').projectDir = file('./infrastructure/driven-adapters/mongo-repository')
-include ':generic'
-project(':generic').projectDir = file('./infrastructure/entry-points/generic')
-include ':api-rest'
-project(':api-rest').projectDir = file('./infrastructure/entry-points/api-rest')
 include ':reactive-web'
 project(':reactive-web').projectDir = file('./infrastructure/entry-points/reactive-web')
