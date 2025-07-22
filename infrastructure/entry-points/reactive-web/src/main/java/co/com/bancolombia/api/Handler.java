@@ -2,7 +2,6 @@ package co.com.bancolombia.api;
 
 import co.com.bancolombia.api.dto.ApiResponse;
 import co.com.bancolombia.api.dto.branch.BranchRequest;
-import co.com.bancolombia.api.dto.branch.BranchResponse;
 import co.com.bancolombia.api.dto.branch.RenameBranchRequest;
 import co.com.bancolombia.api.dto.branchProduct.BranchProductRequest;
 import co.com.bancolombia.api.dto.branchProduct.BranchProductResponse;
@@ -12,8 +11,10 @@ import co.com.bancolombia.api.dto.franchise.RenameFranchiseRequest;
 import co.com.bancolombia.api.dto.product.ProductRequest;
 import co.com.bancolombia.api.dto.product.ProductResponse;
 import co.com.bancolombia.api.dto.product.RenameProductRequest;
+import co.com.bancolombia.api.mapper.BranchMapper;
+import co.com.bancolombia.api.mapper.BranchProductMapper;
 import co.com.bancolombia.api.mapper.FranchiseMapper;
-import co.com.bancolombia.model.template.Branch;
+import co.com.bancolombia.api.mapper.ProductMapper;
 import co.com.bancolombia.model.template.BranchProduct;
 import co.com.bancolombia.model.template.Product;
 import co.com.bancolombia.usecase.service.FranchiseService;
@@ -29,8 +30,10 @@ import reactor.core.publisher.Mono;
 public class Handler {
 
     private final FranchiseService franchiseService;
-
     private final FranchiseMapper franchiseMapper;
+    private final BranchMapper branchMapper;
+    private final ProductMapper productMapper;
+    private final BranchProductMapper branchProductMapper;
 
     public Mono<ServerResponse> createFranchise(ServerRequest request) {
         return request.bodyToMono(FranchiseRequest.class)
@@ -54,13 +57,9 @@ public class Handler {
 
     public Mono<ServerResponse> createBranch(ServerRequest request) {
         return request.bodyToMono(BranchRequest.class)
-            .map(req -> Branch.builder().name(req.getName()).franchiseId(req.getFranchiseId()).build())
+            .map(branchMapper::toDomain)
             .flatMap(franchiseService::createBranch)
-            .map(saved -> BranchResponse.builder()
-                .id(saved.getId())
-                .name(saved.getName())
-                .franchiseId(saved.getFranchiseId())
-                .build())
+            .map(branchMapper::toResponseDto)
             .flatMap(response -> ServerResponse.status(HttpStatus.CREATED).bodyValue(new ApiResponse<>(response)));
     }
 
@@ -73,12 +72,9 @@ public class Handler {
 
     public Mono<ServerResponse> createProduct(ServerRequest request) {
         return request.bodyToMono(ProductRequest.class)
-            .map(req -> Product.builder().name(req.getName()).build())
+            .map(productMapper::toDomain)
             .flatMap(franchiseService::createProduct)
-            .map(created -> ProductResponse.builder()
-                .id(created.getId())
-                .name(created.getName())
-                .build())
+            .map(productMapper::toResponseDto)
             .flatMap(response -> ServerResponse.status(HttpStatus.CREATED).bodyValue(new ApiResponse<>(response)));
     }
 
@@ -91,18 +87,9 @@ public class Handler {
 
     public Mono<ServerResponse> createBranchProduct(ServerRequest request) {
         return request.bodyToMono(BranchProductRequest.class)
-            .map(req -> BranchProduct.builder()
-                .branchId(req.getBranchId())
-                .productId(req.getProductId())
-                .stock(req.getStock())
-                .build())
+            .map(branchProductMapper::toDomain)
             .flatMap(franchiseService::createBranchProduct)
-            .map(bp -> BranchProductResponse.builder()
-                .id(bp.getId())
-                .branchId(bp.getBranchId())
-                .productId(bp.getProductId())
-                .stock(bp.getStock())
-                .build())
+            .map(branchProductMapper::toResponseDto)
             .flatMap(response -> ServerResponse.status(HttpStatus.CREATED).bodyValue(ApiResponse.<BranchProductResponse>builder().data(response).build()));
     }
 
