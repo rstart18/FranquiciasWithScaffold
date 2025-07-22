@@ -3,7 +3,7 @@ package co.com.bancolombia.api;
 import co.com.bancolombia.api.dto.franchise.FranchiseRequest;
 import co.com.bancolombia.api.dto.franchise.FranchiseResponse;
 import co.com.bancolombia.model.template.Franchise;
-import co.com.bancolombia.usecase.franchise.FranchiseUseCase;
+import co.com.bancolombia.usecase.bussiness.FranchiseUseCase;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -37,30 +37,30 @@ public class FranchiseMongoRepositoryAdapter implements DbPort {
     }
 
     @Override
-    public Mono<Franchise> findByIdFranchise(String id) {
+    public Mono<Franchise> findFranchiseById(String id) {
         return franchiseMongoDBRepository.findById(id)
             .map(franchiseEntityMapper::toDomain);
     }
 
     @Override
-    public Mono<Franchise> findByNitOrName(String nit, String name) {
+    public Mono<Franchise> findFranchiseByNitOrName(String nit, String name) {
         return franchiseMongoDBRepository.findByNitOrName(nit, name)
             .map(franchiseEntityMapper::toDomain);
     }
 
     @Override
-    public Mono<Franchise> findByName(String name) {
+    public Mono<Franchise> findFranchiseByName(String name) {
         return franchiseMongoDBRepository.findByName(name)
             .map(franchiseEntityMapper::toDomain);
     }
 
     @Override
-    public Mono<String> getNameById(String productId) {
+    public Mono<String> getProductNameById(String productId) {
         return productMongoDBRepository.getNameById(productId);
     }
 
     @Override
-    public Flux<Branch> findByFranchiseId(String franchiseId) {
+    public Flux<Branch> findAllBranchByFranchiseId(String franchiseId) {
         return branchMongoDBRepository.findByFranchiseId(franchiseId)
             .map(branchEntityMapper::toDomain);
     }
@@ -72,13 +72,13 @@ public class FranchiseMongoRepositoryAdapter implements DbPort {
     }
 
     @Override
-    public Mono<BranchProduct> findByBranchIdAndProductId(String branchId, String productId) {
+    public Mono<BranchProduct> findBranchProductByBranchIdAndProductId(String branchId, String productId) {
         return branchProductMongoDBRepository.findByBranchIdAndProductId(branchId, productId)
             .map(branchProductEntityMapper::toDomain);
     }
 
     @Override
-    public Flux<BranchProduct> findAllByBranchId(String branchId) {
+    public Flux<BranchProduct> findAllBranchProductByBranchId(String branchId) {
         return branchProductMongoDBRepository.findAllByBranchId(branchId)
             .map(branchProductEntityMapper::toDomain);
     }
@@ -90,7 +90,7 @@ public class FranchiseMongoRepositoryAdapter implements DbPort {
     }
 
     @Override
-    public Mono<Product> findById(String id) {
+    public Mono<Product> findProductById(String id) {
         return productMongoDBRepository.findById(id)
             .map(productEntityMapper::toDomain);
     }

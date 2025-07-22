@@ -62,7 +62,7 @@ class AdapterOperationsTest {
     void testFindById() {
         when(repository.findById("key")).thenReturn(Mono.just(entity));
 
-        StepVerifier.create(adapter.findById("key"))
+        StepVerifier.create(adapter.findProductById("key"))
                 .expectNext("value")
                 .verifyComplete();
     }

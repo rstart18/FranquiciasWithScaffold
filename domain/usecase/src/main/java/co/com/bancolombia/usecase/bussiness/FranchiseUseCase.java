@@ -33,7 +33,7 @@ public class FranchiseUseCase implements FranchiseService {
     @Override
     public Mono<Void> renameFranchise(String franchiseId, String newName) {
         return franchiseValidator.validateFranchiseNameNotTaken(newName)
-            .then(repository.findByIdFranchise(franchiseId)
+            .then(repository.findFranchiseById(franchiseId)
                 .switchIfEmpty(Mono.error(new NotFoundException(
                     ErrorCode.FRANCHISE_NOT_FOUND.getMessage(),
                     ErrorCode.FRANCHISE_NOT_FOUND.getCode())))
@@ -50,9 +50,10 @@ public class FranchiseUseCase implements FranchiseService {
 
     @Override
     public Mono<Void> renameBranch(String id, String newName) {
-        return repository.findById(id)
+        return repository.findProductById(id)
             .switchIfEmpty(Mono.error(new NotFoundException(
-                ErrorCode.BRANCH_NOT_FOUND.getMessage(), ErrorCode.BRANCH_NOT_FOUND.getCode())))
+                ErrorCode.BRANCH_NOT_FOUND.getMessage(),
+                ErrorCode.BRANCH_NOT_FOUND.getCode())))
             .flatMap(branch -> {
                 branch.setName(newName);
                 return repository.saveProduct(branch);
@@ -67,9 +68,11 @@ public class FranchiseUseCase implements FranchiseService {
 
     @Override
     public Mono<Void> updateStock(String branchId, String productId, int newStock) {
-        return repository.findByBranchIdAndProductId(branchId, productId)
+        return repository.findBranchProductByBranchIdAndProductId(branchId, productId)
             .switchIfEmpty(Mono.error(
-                new NotFoundException(ErrorCode.BRANCH_PRODUCT_NOT_FOUND.getMessage(), ErrorCode.BRANCH_PRODUCT_NOT_FOUND.getCode())))
+                new NotFoundException(
+                    ErrorCode.BRANCH_PRODUCT_NOT_FOUND.getMessage(),
+                    ErrorCode.BRANCH_PRODUCT_NOT_FOUND.getCode())))
             .flatMap(bp -> {
                 bp.setStock(newStock);
                 return repository.saveBranchProduct(bp);
@@ -79,9 +82,11 @@ public class FranchiseUseCase implements FranchiseService {
 
     @Override
     public Mono<BranchProduct> softDelete(String branchId, String productId) {
-        return repository.findByBranchIdAndProductId(branchId, productId)
+        return repository.findBranchProductByBranchIdAndProductId(branchId, productId)
             .switchIfEmpty(Mono.error(
-                new NotFoundException(ErrorCode.BRANCH_PRODUCT_NOT_FOUND.getMessage(), ErrorCode.BRANCH_PRODUCT_NOT_FOUND.getCode())))
+                new NotFoundException(
+                    ErrorCode.BRANCH_PRODUCT_NOT_FOUND.getMessage(),
+                    ErrorCode.BRANCH_PRODUCT_NOT_FOUND.getCode())))
             .map(bp -> {
                 bp.setDeletedAt(LocalDateTime.now());
                 return bp;
@@ -91,9 +96,9 @@ public class FranchiseUseCase implements FranchiseService {
 
     @Override
     public Flux<BranchProductWithInfo> findTopStockProductPerBranchByFranchise(String franchiseId) {
-        return repository.findByFranchiseId(franchiseId)
+        return repository.findAllBranchByFranchiseId(franchiseId)
             .flatMap(branch ->
-                repository.findAllByBranchId(branch.getId())
+                repository.findAllBranchProductByBranchId(branch.getId())
                     .filter(bp -> bp.getDeletedAt() == null)
                     .collectList()
                     .flatMapMany(list ->
@@ -103,8 +108,11 @@ public class FranchiseUseCase implements FranchiseService {
                         )
                     )
                     .flatMap(max ->
-                        repository.getNameById(max.getProductId())
-                            .switchIfEmpty(Mono.error(new RuntimeException("Product name not found")))
+                        repository.getProductNameById(max.getProductId())
+                            .switchIfEmpty(Mono.error(new NotFoundException(
+                                ErrorCode.PRODUCT_NAME_NOT_FOUND.getMessage(),
+                                ErrorCode.PRODUCT_NAME_NOT_FOUND.getCode()
+                                )))
                             .map(productName ->
                                 BranchProductWithInfo.builder()
                                     .branchId(branch.getId())
@@ -127,7 +135,7 @@ public class FranchiseUseCase implements FranchiseService {
     @Override
     public Mono<Void> renameProduct(String productId, String newName) {
         return productValidator.validateProductNameNotTaken(newName) // validar antes de buscar el producto
-            .then(repository.findById(productId)
+            .then(repository.findProductById(productId)
                 .switchIfEmpty(Mono.error(new NotFoundException(
                     ErrorCode.PRODUCT_NOT_FOUND.getMessage(),
                     ErrorCode.PRODUCT_NOT_FOUND.getCode())))
@@ -139,7 +147,7 @@ public class FranchiseUseCase implements FranchiseService {
 
     @Override
     public Mono<String> getNameById(String productId) {
-        return repository.findById(productId)
+        return repository.findProductById(productId)
             .map(Product::getName);
     }
 

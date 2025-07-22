@@ -12,7 +12,7 @@ public class FranchisesValidator {
     private final DbPort repository;
 
     public Mono<Void> validateUniqueFranchise(String nit, String name) {
-        return repository.findByNitOrName(nit, name)
+        return repository.findFranchiseByNitOrName(nit, name)
             .flatMap(existing -> Mono.error(new BusinessException(
                 ErrorCode.FRANCHISE_ALREADY_EXISTS.name(),
                 ErrorCode.FRANCHISE_ALREADY_EXISTS.getCode()
@@ -21,7 +21,7 @@ public class FranchisesValidator {
     }
 
     public Mono<Void> validateFranchiseNameNotTaken(String newName) {
-        return repository.findByName(newName)
+        return repository.findFranchiseByName(newName)
             .flatMap(existing -> Mono.error(new BusinessException(
                 ErrorCode.FRANCHISE_ALREADY_EXISTS.name(),
                 ErrorCode.FRANCHISE_ALREADY_EXISTS.getCode()

@@ -9,20 +9,20 @@ import reactor.core.publisher.Mono;
 
 public interface DbPort {
     Mono<Franchise> saveFranchise(Franchise franchise);
-    Mono<Franchise> findByIdFranchise(String id);
-    Mono<Franchise> findByNitOrName(String nit, String name);
-    Mono<Franchise> findByName(String name);
+    Mono<Franchise> findFranchiseById(String id);
+    Mono<Franchise> findFranchiseByNitOrName(String nit, String name);
+    Mono<Franchise> findFranchiseByName(String name);
 
     Mono<Branch> saveBranch(Branch branch);
-    Flux<Branch> findByFranchiseId(String franchiseId);
+    Flux<Branch> findAllBranchByFranchiseId(String franchiseId);
 
     Mono<BranchProduct> saveBranchProduct(BranchProduct branchProduct);
-    Mono<BranchProduct> findByBranchIdAndProductId(String branchId, String productId);
-    Flux<BranchProduct> findAllByBranchId(String branchId);
+    Mono<BranchProduct> findBranchProductByBranchIdAndProductId(String branchId, String productId);
+    Flux<BranchProduct> findAllBranchProductByBranchId(String branchId);
 
     Mono<Product> saveProduct(Product product);
-    Mono<Product> findById(String id);
+    Mono<Product> findProductById(String id);
     Mono<Product> findProductByName(String name);
-    Mono<String> getNameById(String productId);
+    Mono<String> getProductNameById(String productId);
 }
 
